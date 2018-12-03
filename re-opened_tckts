@@ -1,0 +1,63 @@
+SELECT AA.item_id , AA.max_action_date_active , BB.min_action_date_closed , BB.min_action_date_closed - AA.max_action_date_active AS diff
+
+FROM (SELECT item_id , MAX(action_created_date) AS max_action_date_active , status
+
+FROM (SELECT item_id,
+
+       action_created_date,
+
+       actiontakenby,
+
+       CASE WHEN status = 'Queued' THEN 'Active'
+
+            WHEN status = 'Pending' THEN 'Active'
+
+            WHEN status = 'Closed' THEN 'Closed'
+
+            WHEN status = 'Resolved' THEN 'Closed'
+
+            WHEN status = 'New' THEN 'Active'
+
+            WHEN status = 'Active' THEN 'Active'
+
+                    ELSE NULL END AS status,
+
+       status_reason_code
+
+FROM INSIGHT_DE.dbo.DTX_HISTORY
+
+WHERE action_created_date > 1541030400 AND status = 'Active') aa
+
+GROUP BY item_id , status) AA
+
+LEFT JOIN (SELECT item_id , MIN(action_created_date) AS min_action_date_closed , status
+
+FROM (SELECT item_id,
+
+       action_created_date,
+
+       actiontakenby,
+
+       CASE WHEN status = 'Queued' THEN 'Active'
+
+            WHEN status = 'Pending' THEN 'Active'
+
+            WHEN status = 'Closed' THEN 'Closed'
+
+            WHEN status = 'Resolved' THEN 'Closed'
+
+            WHEN status = 'New' THEN 'Active'
+
+            WHEN status = 'Active' THEN 'Active'
+
+                    ELSE NULL END AS status,
+
+       status_reason_code
+
+FROM INSIGHT_DE.dbo.DTX_HISTORY
+
+WHERE action_created_date > 1541030400 AND status = 'Closed') bb
+
+GROUP BY item_id , status) BB ON AA.item_id = BB.item_id
+
+WHERE BB.min_action_date_closed - AA.max_action_date_active < 0
