@@ -1,0 +1,9 @@
+{
+	"name": "rg-ims-emea-devops-reporting-data-factory",
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "2ca89c6c-b3f3-4a7e-9d9d-e3db35868b5d",
+		"tenantId": "5ef1f865-1481-4644-ac92-1dab417bf9d7"
+	}
+}

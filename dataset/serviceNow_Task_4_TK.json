@@ -1,0 +1,17 @@
+{
+	"name": "serviceNow_Task_4_TK",
+	"properties": {
+		"description": "rest query to serviceNow for Task",
+		"linkedServiceName": {
+			"referenceName": "serviceNOW_prod_REST",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": "table/task?sysparm_exclude_reference_link=true&sysparm_suppress_pagination_header=true&sysparm_limit=2&sysparm_fields=number,closed_at,opened_at,opened_by&sysparm_query=closed_atONToday@javascript:gs.beginningOfToday()@javascript:gs.endOfToday()"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

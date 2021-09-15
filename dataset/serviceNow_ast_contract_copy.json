@@ -1,0 +1,17 @@
+{
+	"name": "serviceNow_ast_contract_copy",
+	"properties": {
+		"description": "rest query to serviceNow for Task",
+		"linkedServiceName": {
+			"referenceName": "serviceNOW_prod_REST",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": "table/ast_contract"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

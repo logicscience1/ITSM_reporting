@@ -1,0 +1,33 @@
+{
+	"name": "SN_email_logs_trigger",
+	"properties": {
+		"description": "trigger to move logs from shared folder to blob",
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "rpa_data_to_blob",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2020-09-24T09:02:00Z",
+				"timeZone": "UTC",
+				"schedule": {
+					"minutes": [
+						35
+					],
+					"hours": [
+						9
+					]
+				}
+			}
+		}
+	}
+}

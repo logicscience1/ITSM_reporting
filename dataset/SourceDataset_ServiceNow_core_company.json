@@ -1,0 +1,16 @@
+{
+	"name": "SourceDataset_ServiceNow_core_company",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ServiceNow_linkedService",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "ServiceNowObject",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "\"Actual\".\"core_company\""
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

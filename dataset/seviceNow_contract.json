@@ -1,0 +1,21 @@
+{
+	"name": "seviceNow_contract",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "rpa_data_blob_store",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "ast_contract.json",
+				"folderPath": "df-extracts",
+				"container": "sn-data"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,36 @@
+{
+	"name": "RPA_source_emailProcessorBot",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "rpa_data_file_store",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureFileStorageLocation",
+				"fileName": "Amalgamated MailLog.csv"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Header 1",
+				"type": "String"
+			},
+			{
+				"name": "Header 2",
+				"type": "String"
+			},
+			{
+				"name": "Header 3",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,19 @@
+{
+	"name": "seviceNow_TKapp_dataSink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "rpa_data_blob_store",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "ckm-share"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
