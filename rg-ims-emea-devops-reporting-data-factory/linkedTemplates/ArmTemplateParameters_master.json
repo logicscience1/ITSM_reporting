@@ -1,0 +1,66 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "rg-ims-emea-devops-reporting-data-factory"
+		},
+		"CosmosDb1_serviceNow_connectionString": {
+			"value": ""
+		},
+		"ServiceNow_company_password": {
+			"value": ""
+		},
+		"ServiceNow_linkedService_password": {
+			"value": ""
+		},
+		"rpa_data_blob_store_connectionString": {
+			"value": ""
+		},
+		"rpa_data_file_store_connectionString": {
+			"value": ""
+		},
+		"serviceNOW_prod_REST_password": {
+			"value": ""
+		},
+		"serviceNow_core_company_connectionString": {
+			"value": ""
+		},
+		"serviceNow_prod_password": {
+			"value": ""
+		},
+		"serviceNow_task_connectionString": {
+			"value": ""
+		},
+		"ServiceNow_company_properties_typeProperties_endpoint": {
+			"value": "http://insightemea.service-now.com"
+		},
+		"ServiceNow_company_properties_typeProperties_username": {
+			"value": "odbc_user"
+		},
+		"ServiceNow_linkedService_properties_typeProperties_endpoint": {
+			"value": "http://insightemea.service-now.com"
+		},
+		"ServiceNow_linkedService_properties_typeProperties_username": {
+			"value": "odbc_user"
+		},
+		"serviceNOW_prod_REST_properties_typeProperties_url": {
+			"value": "https://services-emea.insight.com/api/now"
+		},
+		"serviceNOW_prod_REST_properties_typeProperties_userName": {
+			"value": "odbc_user"
+		},
+		"serviceNow_prod_properties_typeProperties_endpoint": {
+			"value": "https://services-emea.insight.com"
+		},
+		"serviceNow_prod_properties_typeProperties_username": {
+			"value": "odbc_user"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

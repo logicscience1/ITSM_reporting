@@ -1,0 +1,706 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "rg-ims-emea-devops-reporting-data-factory"
+		},
+		"CosmosDb1_serviceNow_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CosmosDb1_serviceNow'"
+		},
+		"ServiceNow_company_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ServiceNow_company'"
+		},
+		"ServiceNow_linkedService_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ServiceNow_linkedService'"
+		},
+		"rpa_data_blob_store_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'rpa_data_blob_store'"
+		},
+		"rpa_data_file_store_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'rpa_data_file_store'"
+		},
+		"serviceNOW_prod_REST_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'serviceNOW_prod_REST'"
+		},
+		"serviceNow_core_company_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'serviceNow_core_company'"
+		},
+		"serviceNow_prod_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'serviceNow_prod'"
+		},
+		"serviceNow_task_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'serviceNow_task'"
+		},
+		"ServiceNow_company_properties_typeProperties_endpoint": {
+			"type": "string",
+			"defaultValue": "http://insightemea.service-now.com"
+		},
+		"ServiceNow_company_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "odbc_user"
+		},
+		"ServiceNow_linkedService_properties_typeProperties_endpoint": {
+			"type": "string",
+			"defaultValue": "http://insightemea.service-now.com"
+		},
+		"ServiceNow_linkedService_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "odbc_user"
+		},
+		"serviceNOW_prod_REST_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://services-emea.insight.com/api/now"
+		},
+		"serviceNOW_prod_REST_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "odbc_user"
+		},
+		"serviceNow_prod_properties_typeProperties_endpoint": {
+			"type": "string",
+			"defaultValue": "https://services-emea.insight.com"
+		},
+		"serviceNow_prod_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "odbc_user"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/rpa_data_to_blob')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "moves csv files from file storage to blob storage for powerBI ingest",
+				"activities": [
+					{
+						"name": "Copy_b3k",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "example.csv"
+							},
+							{
+								"name": "Destination",
+								"value": "rpa-data/example.csv"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureFileStorageReadSettings",
+									"maxConcurrentConnections": 2,
+									"recursive": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings",
+									"skipLineCount": 0
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings",
+									"maxConcurrentConnections": 1
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"validateDataConsistency": false
+						},
+						"inputs": [
+							{
+								"referenceName": "RPA_source_emailProcessorBot",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "RPA_destination_emailProcessorBot",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-03-14T08:20:42Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/RPA_source_emailProcessorBot')]",
+				"[concat(variables('factoryId'), '/datasets/RPA_destination_emailProcessorBot')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/serviceNow-TKapp_pipe')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "extracts relevant fields from SNOW for the TK-application process.",
+				"activities": [
+					{
+						"name": "serviceNow_Task",
+						"description": "reads serviceNow task table from REST API",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings",
+									"copyBehavior": "MergeFiles"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "serviceNow_Task_4_TK",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "seviceNow_TKapp_dataSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-05-22T07:16:55Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/serviceNow_Task_4_TK')]",
+				"[concat(variables('factoryId'), '/datasets/seviceNow_TKapp_dataSink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sn_ast_contract_to_blob_store')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "extracts serviceNow ast_contract to blob",
+				"activities": [
+					{
+						"name": "copy_sn_ast_contract",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "example.csv"
+							},
+							{
+								"name": "Destination",
+								"value": "rpa-data/example.csv"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"validateDataConsistency": false
+						},
+						"inputs": [
+							{
+								"referenceName": "serviceNow_ast_contract_copy",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "seviceNow_contract",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-08-17T10:31:41Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/serviceNow_ast_contract_copy')]",
+				"[concat(variables('factoryId'), '/datasets/seviceNow_contract')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CosmosDb1_serviceNow_core_company')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CosmosDb1_serviceNow",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "CosmosDbSqlApiCollection",
+				"schema": {},
+				"typeProperties": {
+					"collectionName": "serviceNow_core_company"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/CosmosDb1_serviceNow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RPA_destination_emailProcessorBot')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "rpa_data_blob_store",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "rpa-data"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rpa_data_blob_store')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RPA_source_emailProcessorBot')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "rpa_data_file_store",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureFileStorageLocation",
+						"fileName": "Amalgamated MailLog.csv"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Header 1",
+						"type": "String"
+					},
+					{
+						"name": "Header 2",
+						"type": "String"
+					},
+					{
+						"name": "Header 3",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rpa_data_file_store')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_ServiceNow_core_company')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ServiceNow_linkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "ServiceNowObject",
+				"schema": [],
+				"typeProperties": {
+					"tableName": "\"Actual\".\"core_company\""
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ServiceNow_linkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/serviceNow_Task_4_TK')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "rest query to serviceNow for Task",
+				"linkedServiceName": {
+					"referenceName": "serviceNOW_prod_REST",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "table/task?sysparm_exclude_reference_link=true&sysparm_suppress_pagination_header=true&sysparm_limit=2&sysparm_fields=number,closed_at,opened_at,opened_by&sysparm_query=closed_atONToday@javascript:gs.beginningOfToday()@javascript:gs.endOfToday()"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/serviceNOW_prod_REST')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/serviceNow_ast_contract_copy')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "rest query to serviceNow for Task",
+				"linkedServiceName": {
+					"referenceName": "serviceNOW_prod_REST",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "table/incident_metric"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/serviceNOW_prod_REST')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/seviceNow_TKapp_dataSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "rpa_data_blob_store",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "ckm-share"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rpa_data_blob_store')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/seviceNow_contract')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "rpa_data_blob_store",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "ast_contract.json",
+						"folderPath": "df-extracts",
+						"container": "sn-data"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rpa_data_blob_store')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CosmosDb1_serviceNow')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDb",
+				"typeProperties": {
+					"connectionString": "[parameters('CosmosDb1_serviceNow_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ServiceNow_company')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "company table",
+				"annotations": [],
+				"type": "ServiceNow",
+				"typeProperties": {
+					"endpoint": "[parameters('ServiceNow_company_properties_typeProperties_endpoint')]",
+					"authenticationType": "Basic",
+					"username": "[parameters('ServiceNow_company_properties_typeProperties_username')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ServiceNow_company_password')]"
+					},
+					"useEncryptedEndpoints": true,
+					"useHostVerification": true,
+					"usePeerVerification": true
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ServiceNow_linkedService')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "linked service to serviceNow used as a hop to any required tables",
+				"annotations": [],
+				"type": "ServiceNow",
+				"typeProperties": {
+					"endpoint": "[parameters('ServiceNow_linkedService_properties_typeProperties_endpoint')]",
+					"authenticationType": "Basic",
+					"username": "[parameters('ServiceNow_linkedService_properties_typeProperties_username')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ServiceNow_linkedService_password')]"
+					},
+					"useEncryptedEndpoints": true,
+					"useHostVerification": true,
+					"usePeerVerification": true
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rpa_data_blob_store')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "the files received from the rpa_file_store",
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('rpa_data_blob_store_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rpa_data_file_store')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "storage for the rpa bot logs",
+				"annotations": [],
+				"type": "AzureFileStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('rpa_data_file_store_connectionString')]",
+					"fileShare": "rpa-data"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/serviceNOW_prod_REST')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "rest connection to serviceNow",
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('serviceNOW_prod_REST_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('serviceNOW_prod_REST_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('serviceNOW_prod_REST_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/serviceNow_core_company')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "serviceNow company table",
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('serviceNow_core_company_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/serviceNow_prod')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "linked service to production servicenow for data extraction",
+				"annotations": [],
+				"type": "ServiceNow",
+				"typeProperties": {
+					"endpoint": "[parameters('serviceNow_prod_properties_typeProperties_endpoint')]",
+					"authenticationType": "Basic",
+					"username": "[parameters('serviceNow_prod_properties_typeProperties_username')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('serviceNow_prod_password')]"
+					},
+					"useEncryptedEndpoints": true,
+					"useHostVerification": true,
+					"usePeerVerification": true
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/serviceNow_task')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "serviceNow task table",
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('serviceNow_task_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SN_email_logs_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "trigger to move logs from shared folder to blob",
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "rpa_data_to_blob",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2020-09-24T09:02:00Z",
+						"timeZone": "UTC",
+						"schedule": {
+							"minutes": [
+								35
+							],
+							"hours": [
+								9
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/rpa_data_to_blob')]"
+			]
+		}
+	]
+}
