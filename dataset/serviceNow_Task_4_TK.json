@@ -9,7 +9,7 @@
 		"annotations": [],
 		"type": "RestResource",
 		"typeProperties": {
-			"relativeUrl": "table/sc_req_item_list.do?CSV&sysparm_orderby=number&sysparm_limit=10000&sysparm_offset=0&sysparm_query=sys_created_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)^ORsys_updated_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)&sysparm_fields=sys_id,number,short_description,description,sys_updated_on,assigned_to,cmdb_ci,resolved_at,closed_at,opened_at,company,assignment_group,closed_by,opened_by,resolved_by,priority,escalation,made_sla,sla_due,due_date"
+			"relativeUrl": "sc_req_item_list.do?CSV&sysparm_orderby=number&sysparm_limit=10000&sysparm_offset=0&sysparm_query=sys_created_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)^ORsys_updated_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)&sysparm_fields=sys_id,number,short_description,description,sys_updated_on,assigned_to,cmdb_ci,resolved_at,closed_at,opened_at,company,assignment_group,closed_by,opened_by,resolved_by,priority,escalation,made_sla,sla_due,due_date"
 		},
 		"schema": []
 	},
