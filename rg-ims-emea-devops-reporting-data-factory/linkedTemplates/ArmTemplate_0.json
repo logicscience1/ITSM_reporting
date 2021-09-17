@@ -360,7 +360,7 @@
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
-					"relativeUrl": "table/task?sysparm_exclude_reference_link=true&sysparm_suppress_pagination_header=true&sysparm_limit=2&sysparm_fields=number,closed_at,opened_at,opened_by&sysparm_query=closed_atONToday@javascript:gs.beginningOfToday()@javascript:gs.endOfToday()"
+					"relativeUrl": "table/incident_metric?sysparm_exclude_reference_link=true&sysparm_suppress_pagination_header=true&sysparm_limit=2&sysparm_fields=inc_assigned_to,dv_inc_assigned_to,inc_opened_at,inc_closed_at&sysparm_query=inc_closed_atONToday@javascript:gs.beginningOfToday()@javascript:gs.endOfToday()"
 				},
 				"schema": []
 			},

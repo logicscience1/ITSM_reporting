@@ -1,0 +1,35 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "rg-ims-emea-devops-reporting-data-factory"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/serviceNow_Task_4_TK')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "rest query to serviceNow for Task",
+				"linkedServiceName": {
+					"referenceName": "serviceNOW_prod_REST",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "table/incident_metric?sysparm_exclude_reference_link=true&sysparm_suppress_pagination_header=true&sysparm_limit=2&sysparm_fields=inc_assigned_to,dv_inc_assigned_to,inc_opened_at,inc_closed_at&sysparm_query=inc_closed_atONToday@javascript:gs.beginningOfToday()@javascript:gs.endOfToday()"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		}
+	]
+}
