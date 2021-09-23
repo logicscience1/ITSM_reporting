@@ -177,6 +177,9 @@
 					},
 					"serviceNow_prod_properties_typeProperties_username": {
 						"value": "[parameters('serviceNow_prod_properties_typeProperties_username')]"
+					},
+					"copy_CISCO_data_trigger_properties_typeProperties_scope": {
+						"value": "[parameters('copy_CISCO_data_trigger_properties_typeProperties_scope')]"
 					}
 				}
 			},
@@ -195,9 +198,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"copy_CISCO_data_trigger_properties_typeProperties_scope": {
-						"value": "[parameters('copy_CISCO_data_trigger_properties_typeProperties_scope')]"
 					}
 				}
 			},

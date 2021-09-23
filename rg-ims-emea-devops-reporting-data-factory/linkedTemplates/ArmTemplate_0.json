@@ -86,6 +86,10 @@
 		"serviceNow_prod_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "odbc_user"
+		},
+		"copy_CISCO_data_trigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/0f97750c-1e1d-49dc-ab85-27f811883e9e/resourceGroups/RG_EMEA_IMS_DevOpsAndReporting_Reporting_001_prod/providers/Microsoft.Storage/storageAccounts/rgemeaimsdevopsreporting"
 		}
 	},
 	"variables": {
@@ -278,6 +282,28 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('serviceNow_task_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/copy_CISCO_data_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "daily move the CISCO data from one blob to the TK-App data store.",
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/ckm-share/blobs/",
+					"blobPathEndsWith": "UCCE_Termination_Call_Detail.csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('copy_CISCO_data_trigger_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
 				}
 			},
 			"dependsOn": []
@@ -826,31 +852,6 @@
 					"location": {
 						"type": "AzureBlobStorageLocation",
 						"container": "ckm-share"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/rpa_data_blob_store')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/seviceNow_contract')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "rpa_data_blob_store",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "ast_contract.json",
-						"folderPath": "df-extracts",
-						"container": "sn-data"
 					}
 				},
 				"schema": {}
