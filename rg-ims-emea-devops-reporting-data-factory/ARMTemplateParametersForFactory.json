@@ -32,6 +32,12 @@
 		"serviceNow_task_connectionString": {
 			"value": ""
 		},
+		"rgemeaimsdevopsreporting_storage_connectionString": {
+			"value": ""
+		},
+		"intksauksotkdev001_storage_accountKey": {
+			"value": ""
+		},
 		"ServiceNow_company_properties_typeProperties_endpoint": {
 			"value": "http://insightemea.service-now.com"
 		},
@@ -55,6 +61,9 @@
 		},
 		"serviceNow_prod_properties_typeProperties_username": {
 			"value": "odbc_user"
+		},
+		"intksauksotkdev001_storage_properties_typeProperties_url": {
+			"value": "https://intksauksotkdev001.dfs.core.windows.net"
 		}
 	}
 }

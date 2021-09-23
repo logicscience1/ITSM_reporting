@@ -43,6 +43,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'serviceNow_task'"
 		},
+		"rgemeaimsdevopsreporting_storage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'rgemeaimsdevopsreporting_storage'"
+		},
+		"intksauksotkdev001_storage_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'intksauksotkdev001_storage'"
+		},
 		"ServiceNow_company_properties_typeProperties_endpoint": {
 			"type": "string",
 			"defaultValue": "http://insightemea.service-now.com"
@@ -74,6 +82,10 @@
 		"serviceNow_prod_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "odbc_user"
+		},
+		"intksauksotkdev001_storage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://intksauksotkdev001.dfs.core.windows.net"
 		},
 		"containerUri": {
 			"type": "string",
@@ -129,6 +141,12 @@
 					"serviceNow_task_connectionString": {
 						"value": "[parameters('serviceNow_task_connectionString')]"
 					},
+					"rgemeaimsdevopsreporting_storage_connectionString": {
+						"value": "[parameters('rgemeaimsdevopsreporting_storage_connectionString')]"
+					},
+					"intksauksotkdev001_storage_accountKey": {
+						"value": "[parameters('intksauksotkdev001_storage_accountKey')]"
+					},
 					"ServiceNow_company_properties_typeProperties_endpoint": {
 						"value": "[parameters('ServiceNow_company_properties_typeProperties_endpoint')]"
 					},
@@ -152,6 +170,9 @@
 					},
 					"serviceNow_prod_properties_typeProperties_username": {
 						"value": "[parameters('serviceNow_prod_properties_typeProperties_username')]"
+					},
+					"intksauksotkdev001_storage_properties_typeProperties_url": {
+						"value": "[parameters('intksauksotkdev001_storage_properties_typeProperties_url')]"
 					}
 				}
 			},

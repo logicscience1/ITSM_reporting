@@ -43,6 +43,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'serviceNow_task'"
 		},
+		"rgemeaimsdevopsreporting_storage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'rgemeaimsdevopsreporting_storage'"
+		},
+		"intksauksotkdev001_storage_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'intksauksotkdev001_storage'"
+		},
 		"ServiceNow_company_properties_typeProperties_endpoint": {
 			"type": "string",
 			"defaultValue": "http://insightemea.service-now.com"
@@ -74,6 +82,10 @@
 		"serviceNow_prod_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "odbc_user"
+		},
+		"intksauksotkdev001_storage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://intksauksotkdev001.dfs.core.windows.net"
 		}
 	},
 	"variables": {
@@ -426,7 +438,7 @@
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
-					"relativeUrl": "table/sc_req_item_list.do?CSV&sysparm_orderby=number&sysparm_limit=10000&sysparm_offset=0&sysparm_query=sys_created_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)^ORsys_updated_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)&sysparm_fields=sys_id,number,short_description,description,sys_updated_on,assigned_to,cmdb_ci,resolved_at,closed_at,opened_at,company,assignment_group,closed_by,opened_by,resolved_by,priority,escalation,made_sla,sla_due,due_date"
+					"relativeUrl": "sc_req_item_list.do?CSV&sysparm_orderby=number&sysparm_limit=10000&sysparm_offset=0&sysparm_query=sys_created_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)^ORsys_updated_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)&sysparm_fields=sys_id,number,short_description,description,sys_updated_on,assigned_to,cmdb_ci,resolved_at,closed_at,opened_at,company,assignment_group,closed_by,opened_by,resolved_by,priority,escalation,made_sla,sla_due,due_date"
 				},
 				"schema": []
 			},
@@ -700,6 +712,529 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/rpa_data_to_blob')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipe_CISCO_data')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "moves customer operations telephony data from blob source to TK-app blob store.",
+				"activities": [
+					{
+						"name": "copy_CISCO_data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "UCCE_Termination_Call_Detail",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "sinkCISCOdataForCKapp",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "TKapp"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/UCCE_Termination_Call_Detail')]",
+				"[concat(variables('factoryId'), '/datasets/sinkCISCOdataForCKapp')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rgemeaimsdevopsreporting_storage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('rgemeaimsdevopsreporting_storage_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/UCCE_Termination_Call_Detail')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "rgemeaimsdevopsreporting_storage",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "TKapp"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "UCCE_Termination_Call_Detail.csv",
+						"container": "ckm-share"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "TEAM",
+						"type": "String"
+					},
+					{
+						"name": "agentteamid",
+						"type": "String"
+					},
+					{
+						"name": "AGENT",
+						"type": "String"
+					},
+					{
+						"name": "QUEUE",
+						"type": "String"
+					},
+					{
+						"name": "digitsdialed",
+						"type": "String"
+					},
+					{
+						"name": "recoverykey",
+						"type": "String"
+					},
+					{
+						"name": "mrdomainid",
+						"type": "String"
+					},
+					{
+						"name": "agentskilltargetid",
+						"type": "String"
+					},
+					{
+						"name": "skillgroupskilltargetid",
+						"type": "String"
+					},
+					{
+						"name": "serviceskilltargetid",
+						"type": "String"
+					},
+					{
+						"name": "peripheralid",
+						"type": "String"
+					},
+					{
+						"name": "routeid",
+						"type": "String"
+					},
+					{
+						"name": "routercallkeyday",
+						"type": "String"
+					},
+					{
+						"name": "routercallkey",
+						"type": "String"
+					},
+					{
+						"name": "datetime",
+						"type": "String"
+					},
+					{
+						"name": "peripheralcalltype",
+						"type": "String"
+					},
+					{
+						"name": "peripheralcallkey",
+						"type": "String"
+					},
+					{
+						"name": "calldisposition",
+						"type": "String"
+					},
+					{
+						"name": "networktime",
+						"type": "String"
+					},
+					{
+						"name": "duration",
+						"type": "String"
+					},
+					{
+						"name": "ringtime",
+						"type": "String"
+					},
+					{
+						"name": "delaytime",
+						"type": "String"
+					},
+					{
+						"name": "timetoaband",
+						"type": "String"
+					},
+					{
+						"name": "holdtime",
+						"type": "String"
+					},
+					{
+						"name": "talktime",
+						"type": "String"
+					},
+					{
+						"name": "worktime",
+						"type": "String"
+					},
+					{
+						"name": "localqtime",
+						"type": "String"
+					},
+					{
+						"name": "billrate",
+						"type": "String"
+					},
+					{
+						"name": "callsegmenttime",
+						"type": "String"
+					},
+					{
+						"name": "conferencetime",
+						"type": "String"
+					},
+					{
+						"name": "variable1",
+						"type": "String"
+					},
+					{
+						"name": "variable2",
+						"type": "String"
+					},
+					{
+						"name": "variable3",
+						"type": "String"
+					},
+					{
+						"name": "variable4",
+						"type": "String"
+					},
+					{
+						"name": "variable5",
+						"type": "String"
+					},
+					{
+						"name": "usertouser",
+						"type": "String"
+					},
+					{
+						"name": "newtransaction",
+						"type": "String"
+					},
+					{
+						"name": "recoveryday",
+						"type": "String"
+					},
+					{
+						"name": "timezone",
+						"type": "String"
+					},
+					{
+						"name": "networktargetid",
+						"type": "String"
+					},
+					{
+						"name": "trunkgroupid",
+						"type": "String"
+					},
+					{
+						"name": "dnis",
+						"type": "String"
+					},
+					{
+						"name": "instrumentportnumber",
+						"type": "String"
+					},
+					{
+						"name": "agentperipheralnumber",
+						"type": "String"
+					},
+					{
+						"name": "icrcallkey",
+						"type": "String"
+					},
+					{
+						"name": "icrcallkeyparent",
+						"type": "String"
+					},
+					{
+						"name": "icrcallkeychild",
+						"type": "String"
+					},
+					{
+						"name": "variable6",
+						"type": "String"
+					},
+					{
+						"name": "variable7",
+						"type": "String"
+					},
+					{
+						"name": "variable8",
+						"type": "String"
+					},
+					{
+						"name": "variable9",
+						"type": "String"
+					},
+					{
+						"name": "variable10",
+						"type": "String"
+					},
+					{
+						"name": "ani",
+						"type": "String"
+					},
+					{
+						"name": "answeredwithinservicelevel",
+						"type": "String"
+					},
+					{
+						"name": "priority",
+						"type": "String"
+					},
+					{
+						"name": "trunk",
+						"type": "String"
+					},
+					{
+						"name": "wrapupdata",
+						"type": "String"
+					},
+					{
+						"name": "sourceagentperipheralnumber",
+						"type": "String"
+					},
+					{
+						"name": "sourceagentskilltargetid",
+						"type": "String"
+					},
+					{
+						"name": "calldispositionflag",
+						"type": "String"
+					},
+					{
+						"name": "routercallkeysequencenumber",
+						"type": "String"
+					},
+					{
+						"name": "ced",
+						"type": "String"
+					},
+					{
+						"name": "calltypeid",
+						"type": "String"
+					},
+					{
+						"name": "badcalltag",
+						"type": "String"
+					},
+					{
+						"name": "applicationtaskdisposition",
+						"type": "String"
+					},
+					{
+						"name": "applicationdata",
+						"type": "String"
+					},
+					{
+						"name": "netqtime",
+						"type": "String"
+					},
+					{
+						"name": "dbdatetime",
+						"type": "String"
+					},
+					{
+						"name": "eccpayloadid",
+						"type": "String"
+					},
+					{
+						"name": "calltypereportingdatetime",
+						"type": "String"
+					},
+					{
+						"name": "routedskillgroupskilltargetid",
+						"type": "String"
+					},
+					{
+						"name": "routedserviceskilltargetid",
+						"type": "String"
+					},
+					{
+						"name": "routedagentskilltargetid",
+						"type": "String"
+					},
+					{
+						"name": "originated",
+						"type": "String"
+					},
+					{
+						"name": "callreferenceid",
+						"type": "String"
+					},
+					{
+						"name": "callguid",
+						"type": "String"
+					},
+					{
+						"name": "locationparampkid",
+						"type": "String"
+					},
+					{
+						"name": "locationparamname",
+						"type": "String"
+					},
+					{
+						"name": "pstntrunkgroupid",
+						"type": "String"
+					},
+					{
+						"name": "pstntrunkgroupchannelnumber",
+						"type": "String"
+					},
+					{
+						"name": "networkskillgroupqtime",
+						"type": "String"
+					},
+					{
+						"name": "enterprisequeuetime",
+						"type": "String"
+					},
+					{
+						"name": "startdatetimeutc",
+						"type": "String"
+					},
+					{
+						"name": "protocolid",
+						"type": "String"
+					},
+					{
+						"name": "precisionqueueid",
+						"type": "String"
+					},
+					{
+						"name": "precisionqueuesteporder",
+						"type": "String"
+					},
+					{
+						"name": "attributes",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rgemeaimsdevopsreporting_storage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/intksauksotkdev001_storage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('intksauksotkdev001_storage_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('intksauksotkdev001_storage_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sinkCISCOdataForCKapp')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "intksauksotkdev001_storage",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "TKapp"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "data",
+						"fileSystem": "install"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/intksauksotkdev001_storage')]"
 			]
 		}
 	]
