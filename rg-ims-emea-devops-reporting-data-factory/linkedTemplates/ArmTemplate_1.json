@@ -6,6 +6,10 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "rg-ims-emea-devops-reporting-data-factory"
+		},
+		"copy_CISCO_data_trigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/0f97750c-1e1d-49dc-ab85-27f811883e9e/resourceGroups/RG_EMEA_IMS_DevOpsAndReporting_Reporting_001_prod/providers/Microsoft.Storage/storageAccounts/rgemeaimsdevopsreporting"
 		}
 	},
 	"variables": {
@@ -376,6 +380,38 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/rpa_data_to_blob')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/copy_CISCO_data_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "daily move the CISCO data from one blob to the TK-App data store.",
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pipe_CISCO_data",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/ckm-share/blobs/",
+					"blobPathEndsWith": "UCCE_Termination_Call_Detail.csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('copy_CISCO_data_trigger_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pipe_CISCO_data')]"
 			]
 		}
 	]

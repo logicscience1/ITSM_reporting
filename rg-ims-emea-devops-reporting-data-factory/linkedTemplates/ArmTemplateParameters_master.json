@@ -65,6 +65,9 @@
 		"intksauksotkdev001_storage_properties_typeProperties_url": {
 			"value": "https://intksauksotkdev001.dfs.core.windows.net"
 		},
+		"copy_CISCO_data_trigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/0f97750c-1e1d-49dc-ab85-27f811883e9e/resourceGroups/RG_EMEA_IMS_DevOpsAndReporting_Reporting_001_prod/providers/Microsoft.Storage/storageAccounts/rgemeaimsdevopsreporting"
+		},
 		"containerUri": {
 			"value": ""
 		},
