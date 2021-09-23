@@ -1,0 +1,372 @@
+{
+	"name": "UCCE_Termination_Call_Detail",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "rgemeaimsdevopsreporting_storage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "UCCE_Termination_Call_Detail.csv",
+				"container": "ckm-share"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "TEAM",
+				"type": "String"
+			},
+			{
+				"name": "agentteamid",
+				"type": "String"
+			},
+			{
+				"name": "AGENT",
+				"type": "String"
+			},
+			{
+				"name": "QUEUE",
+				"type": "String"
+			},
+			{
+				"name": "digitsdialed",
+				"type": "String"
+			},
+			{
+				"name": "recoverykey",
+				"type": "String"
+			},
+			{
+				"name": "mrdomainid",
+				"type": "String"
+			},
+			{
+				"name": "agentskilltargetid",
+				"type": "String"
+			},
+			{
+				"name": "skillgroupskilltargetid",
+				"type": "String"
+			},
+			{
+				"name": "serviceskilltargetid",
+				"type": "String"
+			},
+			{
+				"name": "peripheralid",
+				"type": "String"
+			},
+			{
+				"name": "routeid",
+				"type": "String"
+			},
+			{
+				"name": "routercallkeyday",
+				"type": "String"
+			},
+			{
+				"name": "routercallkey",
+				"type": "String"
+			},
+			{
+				"name": "datetime",
+				"type": "String"
+			},
+			{
+				"name": "peripheralcalltype",
+				"type": "String"
+			},
+			{
+				"name": "peripheralcallkey",
+				"type": "String"
+			},
+			{
+				"name": "calldisposition",
+				"type": "String"
+			},
+			{
+				"name": "networktime",
+				"type": "String"
+			},
+			{
+				"name": "duration",
+				"type": "String"
+			},
+			{
+				"name": "ringtime",
+				"type": "String"
+			},
+			{
+				"name": "delaytime",
+				"type": "String"
+			},
+			{
+				"name": "timetoaband",
+				"type": "String"
+			},
+			{
+				"name": "holdtime",
+				"type": "String"
+			},
+			{
+				"name": "talktime",
+				"type": "String"
+			},
+			{
+				"name": "worktime",
+				"type": "String"
+			},
+			{
+				"name": "localqtime",
+				"type": "String"
+			},
+			{
+				"name": "billrate",
+				"type": "String"
+			},
+			{
+				"name": "callsegmenttime",
+				"type": "String"
+			},
+			{
+				"name": "conferencetime",
+				"type": "String"
+			},
+			{
+				"name": "variable1",
+				"type": "String"
+			},
+			{
+				"name": "variable2",
+				"type": "String"
+			},
+			{
+				"name": "variable3",
+				"type": "String"
+			},
+			{
+				"name": "variable4",
+				"type": "String"
+			},
+			{
+				"name": "variable5",
+				"type": "String"
+			},
+			{
+				"name": "usertouser",
+				"type": "String"
+			},
+			{
+				"name": "newtransaction",
+				"type": "String"
+			},
+			{
+				"name": "recoveryday",
+				"type": "String"
+			},
+			{
+				"name": "timezone",
+				"type": "String"
+			},
+			{
+				"name": "networktargetid",
+				"type": "String"
+			},
+			{
+				"name": "trunkgroupid",
+				"type": "String"
+			},
+			{
+				"name": "dnis",
+				"type": "String"
+			},
+			{
+				"name": "instrumentportnumber",
+				"type": "String"
+			},
+			{
+				"name": "agentperipheralnumber",
+				"type": "String"
+			},
+			{
+				"name": "icrcallkey",
+				"type": "String"
+			},
+			{
+				"name": "icrcallkeyparent",
+				"type": "String"
+			},
+			{
+				"name": "icrcallkeychild",
+				"type": "String"
+			},
+			{
+				"name": "variable6",
+				"type": "String"
+			},
+			{
+				"name": "variable7",
+				"type": "String"
+			},
+			{
+				"name": "variable8",
+				"type": "String"
+			},
+			{
+				"name": "variable9",
+				"type": "String"
+			},
+			{
+				"name": "variable10",
+				"type": "String"
+			},
+			{
+				"name": "ani",
+				"type": "String"
+			},
+			{
+				"name": "answeredwithinservicelevel",
+				"type": "String"
+			},
+			{
+				"name": "priority",
+				"type": "String"
+			},
+			{
+				"name": "trunk",
+				"type": "String"
+			},
+			{
+				"name": "wrapupdata",
+				"type": "String"
+			},
+			{
+				"name": "sourceagentperipheralnumber",
+				"type": "String"
+			},
+			{
+				"name": "sourceagentskilltargetid",
+				"type": "String"
+			},
+			{
+				"name": "calldispositionflag",
+				"type": "String"
+			},
+			{
+				"name": "routercallkeysequencenumber",
+				"type": "String"
+			},
+			{
+				"name": "ced",
+				"type": "String"
+			},
+			{
+				"name": "calltypeid",
+				"type": "String"
+			},
+			{
+				"name": "badcalltag",
+				"type": "String"
+			},
+			{
+				"name": "applicationtaskdisposition",
+				"type": "String"
+			},
+			{
+				"name": "applicationdata",
+				"type": "String"
+			},
+			{
+				"name": "netqtime",
+				"type": "String"
+			},
+			{
+				"name": "dbdatetime",
+				"type": "String"
+			},
+			{
+				"name": "eccpayloadid",
+				"type": "String"
+			},
+			{
+				"name": "calltypereportingdatetime",
+				"type": "String"
+			},
+			{
+				"name": "routedskillgroupskilltargetid",
+				"type": "String"
+			},
+			{
+				"name": "routedserviceskilltargetid",
+				"type": "String"
+			},
+			{
+				"name": "routedagentskilltargetid",
+				"type": "String"
+			},
+			{
+				"name": "originated",
+				"type": "String"
+			},
+			{
+				"name": "callreferenceid",
+				"type": "String"
+			},
+			{
+				"name": "callguid",
+				"type": "String"
+			},
+			{
+				"name": "locationparampkid",
+				"type": "String"
+			},
+			{
+				"name": "locationparamname",
+				"type": "String"
+			},
+			{
+				"name": "pstntrunkgroupid",
+				"type": "String"
+			},
+			{
+				"name": "pstntrunkgroupchannelnumber",
+				"type": "String"
+			},
+			{
+				"name": "networkskillgroupqtime",
+				"type": "String"
+			},
+			{
+				"name": "enterprisequeuetime",
+				"type": "String"
+			},
+			{
+				"name": "startdatetimeutc",
+				"type": "String"
+			},
+			{
+				"name": "protocolid",
+				"type": "String"
+			},
+			{
+				"name": "precisionqueueid",
+				"type": "String"
+			},
+			{
+				"name": "precisionqueuesteporder",
+				"type": "String"
+			},
+			{
+				"name": "attributes",
+				"type": "String"
+			}
+		]
+	}
+}
