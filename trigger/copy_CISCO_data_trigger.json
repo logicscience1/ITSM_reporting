@@ -3,7 +3,7 @@
 	"properties": {
 		"description": "daily move the CISCO data from one blob to the TK-App data store.",
 		"annotations": [],
-		"runtimeState": "Started",
+		"runtimeState": "Stopped",
 		"pipelines": [
 			{
 				"pipelineReference": {
