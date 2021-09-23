@@ -19,6 +19,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ServiceNow_linkedService'"
 		},
+		"intksauksotkdev001_storage_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'intksauksotkdev001_storage'"
+		},
+		"rgemeaimsdevopsreporting_storage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'rgemeaimsdevopsreporting_storage'"
+		},
 		"rpa_data_blob_store_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'rpa_data_blob_store'"
@@ -43,14 +51,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'serviceNow_task'"
 		},
-		"rgemeaimsdevopsreporting_storage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'rgemeaimsdevopsreporting_storage'"
-		},
-		"intksauksotkdev001_storage_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'intksauksotkdev001_storage'"
-		},
 		"ServiceNow_company_properties_typeProperties_endpoint": {
 			"type": "string",
 			"defaultValue": "http://insightemea.service-now.com"
@@ -67,6 +67,10 @@
 			"type": "string",
 			"defaultValue": "odbc_user"
 		},
+		"intksauksotkdev001_storage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://intksauksotkdev001.dfs.core.windows.net"
+		},
 		"serviceNOW_prod_REST_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://services-emea.insight.com/api/now"
@@ -82,10 +86,6 @@
 		"serviceNow_prod_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "odbc_user"
-		},
-		"intksauksotkdev001_storage_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://intksauksotkdev001.dfs.core.windows.net"
 		}
 	},
 	"variables": {
@@ -147,6 +147,36 @@
 					"useEncryptedEndpoints": true,
 					"useHostVerification": true,
 					"usePeerVerification": true
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/intksauksotkdev001_storage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('intksauksotkdev001_storage_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('intksauksotkdev001_storage_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rgemeaimsdevopsreporting_storage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('rgemeaimsdevopsreporting_storage_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -248,36 +278,6 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('serviceNow_task_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/rgemeaimsdevopsreporting_storage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('rgemeaimsdevopsreporting_storage_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/intksauksotkdev001_storage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('intksauksotkdev001_storage_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('intksauksotkdev001_storage_accountKey')]"
-					}
 				}
 			},
 			"dependsOn": []
@@ -387,96 +387,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ServiceNow_linkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/serviceNow_Task_4_TK')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "rest query to serviceNow for Task",
-				"linkedServiceName": {
-					"referenceName": "serviceNOW_prod_REST",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": "sc_req_item_list.do?CSV&sysparm_orderby=number&sysparm_limit=10000&sysparm_offset=0&sysparm_query=sys_created_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)^ORsys_updated_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)&sysparm_fields=sys_id,number,short_description,description,sys_updated_on,assigned_to,cmdb_ci,resolved_at,closed_at,opened_at,company,assignment_group,closed_by,opened_by,resolved_by,priority,escalation,made_sla,sla_due,due_date"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/serviceNOW_prod_REST')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/serviceNow_ast_contract_copy')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "rest query to serviceNow for Task",
-				"linkedServiceName": {
-					"referenceName": "serviceNOW_prod_REST",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": "table/incident_metric"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/serviceNOW_prod_REST')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/seviceNow_TKapp_dataSink')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "rpa_data_blob_store",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "ckm-share"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/rpa_data_blob_store')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/seviceNow_contract')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "rpa_data_blob_store",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "ast_contract.json",
-						"folderPath": "df-extracts",
-						"container": "sn-data"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/rpa_data_blob_store')]"
 			]
 		},
 		{
@@ -857,6 +767,96 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/rgemeaimsdevopsreporting_storage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/serviceNow_Task_4_TK')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "rest query to serviceNow for Task",
+				"linkedServiceName": {
+					"referenceName": "serviceNOW_prod_REST",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "sc_req_item_list.do?CSV&sysparm_orderby=number&sysparm_limit=10000&sysparm_offset=0&sysparm_query=sys_created_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)^ORsys_updated_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)&sysparm_fields=sys_id,number,short_description,description,sys_updated_on,assigned_to,cmdb_ci,resolved_at,closed_at,opened_at,company,assignment_group,closed_by,opened_by,resolved_by,priority,escalation,made_sla,sla_due,due_date"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/serviceNOW_prod_REST')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/serviceNow_ast_contract_copy')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "rest query to serviceNow for Task",
+				"linkedServiceName": {
+					"referenceName": "serviceNOW_prod_REST",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "table/incident_metric"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/serviceNOW_prod_REST')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/seviceNow_TKapp_dataSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "rpa_data_blob_store",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "ckm-share"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rpa_data_blob_store')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/seviceNow_contract')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "rpa_data_blob_store",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "ast_contract.json",
+						"folderPath": "df-extracts",
+						"container": "sn-data"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/rpa_data_blob_store')]"
 			]
 		}
 	]

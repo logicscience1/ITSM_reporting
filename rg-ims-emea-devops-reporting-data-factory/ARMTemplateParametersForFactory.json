@@ -14,6 +14,12 @@
 		"ServiceNow_linkedService_password": {
 			"value": ""
 		},
+		"intksauksotkdev001_storage_accountKey": {
+			"value": ""
+		},
+		"rgemeaimsdevopsreporting_storage_connectionString": {
+			"value": ""
+		},
 		"rpa_data_blob_store_connectionString": {
 			"value": ""
 		},
@@ -32,12 +38,6 @@
 		"serviceNow_task_connectionString": {
 			"value": ""
 		},
-		"rgemeaimsdevopsreporting_storage_connectionString": {
-			"value": ""
-		},
-		"intksauksotkdev001_storage_accountKey": {
-			"value": ""
-		},
 		"ServiceNow_company_properties_typeProperties_endpoint": {
 			"value": "http://insightemea.service-now.com"
 		},
@@ -50,6 +50,9 @@
 		"ServiceNow_linkedService_properties_typeProperties_username": {
 			"value": "odbc_user"
 		},
+		"intksauksotkdev001_storage_properties_typeProperties_url": {
+			"value": "https://intksauksotkdev001.dfs.core.windows.net"
+		},
 		"serviceNOW_prod_REST_properties_typeProperties_url": {
 			"value": "https://services-emea.insight.com/api/now"
 		},
@@ -61,9 +64,6 @@
 		},
 		"serviceNow_prod_properties_typeProperties_username": {
 			"value": "odbc_user"
-		},
-		"intksauksotkdev001_storage_properties_typeProperties_url": {
-			"value": "https://intksauksotkdev001.dfs.core.windows.net"
 		},
 		"copy_CISCO_data_trigger_properties_typeProperties_scope": {
 			"value": "/subscriptions/0f97750c-1e1d-49dc-ab85-27f811883e9e/resourceGroups/RG_EMEA_IMS_DevOpsAndReporting_Reporting_001_prod/providers/Microsoft.Storage/storageAccounts/rgemeaimsdevopsreporting"
