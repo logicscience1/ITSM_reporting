@@ -5,6 +5,9 @@
 			"referenceName": "rgemeaimsdevopsreporting_storage",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "TKapp"
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {

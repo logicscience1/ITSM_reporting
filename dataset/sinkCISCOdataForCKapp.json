@@ -1,0 +1,26 @@
+{
+	"name": "sinkCISCOdataForCKapp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "intksauksotkdev001_storage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "TKapp"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "data",
+				"fileSystem": "install"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
