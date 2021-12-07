@@ -1,0 +1,13 @@
+{
+	"name": "ISCMS_IntuneLicences",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "connects to azure table with Intune licences for ISCMS service",
+		"annotations": [],
+		"type": "AzureTableStorage",
+		"typeProperties": {
+			"sasUri": "https://iscmsplicenses2.table.core.windows.net/IntuneLicenses",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDI2MEQ5NDYzLUU5OEUtNDY5Ri05QjlDLTJBNjdCRDE1Mzg2Rl81MDRmNTI0OC1hZDg4LTQ0ZjItYTc4My0wNDA1OTc3YTExNTAiDQp9"
+		}
+	}
+}
