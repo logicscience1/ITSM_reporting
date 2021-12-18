@@ -1,0 +1,10 @@
+{
+	"name": "sys_user-cosmos",
+	"properties": {
+		"description": "copies sys_user data from csv in azure files to cosmosdb",
+		"folder": {
+			"name": "servicenow-data"
+		},
+		"annotations": []
+	}
+}
