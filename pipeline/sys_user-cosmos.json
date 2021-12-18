@@ -2,6 +2,25 @@
 	"name": "sys_user-cosmos",
 	"properties": {
 		"description": "copies sys_user data from csv in azure files to cosmosdb",
+		"activities": [
+			{
+				"name": "Copy sys_user",
+				"description": "copies sys_user_*.csv from files to cosmosdb",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"enableStaging": false
+				}
+			}
+		],
 		"folder": {
 			"name": "servicenow-data"
 		},
