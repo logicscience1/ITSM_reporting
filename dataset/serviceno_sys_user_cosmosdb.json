@@ -1,0 +1,15 @@
+{
+	"name": "serviceno_sys_user_cosmosdb",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CosmosDb1_serviceNow",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "CosmosDbSqlApiCollection",
+		"schema": {},
+		"typeProperties": {
+			"collectionName": "sys_user"
+		}
+	}
+}
