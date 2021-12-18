@@ -13,6 +13,65 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/serviceNow_Task_4_TK')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "rest query to serviceNow for Task",
+				"linkedServiceName": {
+					"referenceName": "serviceNOW_prod_REST",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "sc_req_item_list.do?CSV&sysparm_orderby=number&sysparm_limit=10000&sysparm_offset=0&sysparm_query=sys_created_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)^ORsys_updated_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)&sysparm_fields=sys_id,number,short_description,description,sys_updated_on,assigned_to,cmdb_ci,resolved_at,closed_at,opened_at,company,assignment_group,closed_by,opened_by,resolved_by,priority,escalation,made_sla,sla_due,due_date"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/serviceNow_ast_contract_copy')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "rest query to serviceNow for Task",
+				"linkedServiceName": {
+					"referenceName": "serviceNOW_prod_REST",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "table/incident_metric"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/seviceNow_TKapp_dataSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "rpa_data_blob_store",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "ckm-share"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/seviceNow_contract')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -61,6 +120,95 @@
 					"quoteChar": "\""
 				},
 				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/servicenow_sys_user')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "servicenow_itsm_files",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureFileStorageLocation",
+						"fileName": "servicenow_sys_user.csv",
+						"folderPath": "ServiceNow/serviceNow_database_mirror"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "sys_id",
+						"type": "String"
+					},
+					{
+						"name": "last_login",
+						"type": "String"
+					},
+					{
+						"name": "user_name",
+						"type": "String"
+					},
+					{
+						"name": "locked_out",
+						"type": "String"
+					},
+					{
+						"name": "name",
+						"type": "String"
+					},
+					{
+						"name": "active",
+						"type": "String"
+					},
+					{
+						"name": "company",
+						"type": "String"
+					},
+					{
+						"name": "location",
+						"type": "String"
+					},
+					{
+						"name": "sys_updated_on",
+						"type": "String"
+					},
+					{
+						"name": "email",
+						"type": "String"
+					},
+					{
+						"name": "password_needs_reset",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/serviceno_sys_user_cosmosdb')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CosmosDb1_serviceNow",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "CosmosDbSqlApiCollection",
+				"schema": {},
+				"typeProperties": {
+					"collectionName": "sys_user"
+				}
 			},
 			"dependsOn": []
 		},
@@ -288,7 +436,10 @@
 				"annotations": [],
 				"lastPublishTime": "2021-05-22T07:16:55Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/serviceNow_Task_4_TK')]",
+				"[concat(variables('factoryId'), '/datasets/seviceNow_TKapp_dataSink')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/sn_ast_contract_to_blob_store')]",
@@ -361,7 +512,77 @@
 				"lastPublishTime": "2021-08-17T10:31:41Z"
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/serviceNow_ast_contract_copy')]",
 				"[concat(variables('factoryId'), '/datasets/seviceNow_contract')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sys_user-cosmos')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "copies sys_user data from csv in azure files to cosmosdb",
+				"activities": [
+					{
+						"name": "Copy sys_user",
+						"description": "copies sys_user_*.csv from files to cosmosdb",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureFileStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "CosmosDbSqlApiSink",
+								"writeBehavior": "insert",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "servicenow_sys_user",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "serviceno_sys_user_cosmosdb",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "servicenow-data"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/servicenow_sys_user')]",
+				"[concat(variables('factoryId'), '/datasets/serviceno_sys_user_cosmosdb')]"
 			]
 		},
 		{

@@ -51,6 +51,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'serviceNow_task'"
 		},
+		"servicenow_itsm_files_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'servicenow_itsm_files'"
+		},
+		"ISCMS_IntuneLicences_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'ISCMS_IntuneLicences'"
+		},
 		"ServiceNow_company_properties_typeProperties_endpoint": {
 			"type": "string",
 			"defaultValue": "http://insightemea.service-now.com"
@@ -105,6 +113,20 @@
 				"type": "CosmosDb",
 				"typeProperties": {
 					"connectionString": "[parameters('CosmosDb1_serviceNow_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ISCMS_IntuneLicences')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "connects to azure table with Intune licences for ISCMS service",
+				"annotations": [],
+				"type": "AzureTableStorage",
+				"typeProperties": {
+					"sasUri": "[parameters('ISCMS_IntuneLicences_sasUri')]"
 				}
 			},
 			"dependsOn": []
@@ -304,6 +326,42 @@
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"description": "test integration runtime for ISCMS intune license table store",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 10,
+							"cleanup": false
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/servicenow_itsm_files')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "linked service for azure files itsm-files folder",
+				"annotations": [],
+				"type": "AzureFileStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('servicenow_itsm_files_connectionString')]",
+					"fileShare": "itsm-files"
 				}
 			},
 			"dependsOn": []
@@ -793,71 +851,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/rgemeaimsdevopsreporting_storage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/serviceNow_Task_4_TK')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "rest query to serviceNow for Task",
-				"linkedServiceName": {
-					"referenceName": "serviceNOW_prod_REST",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": "sc_req_item_list.do?CSV&sysparm_orderby=number&sysparm_limit=10000&sysparm_offset=0&sysparm_query=sys_created_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)^ORsys_updated_onONYesterday@javascript:gs.daysAgoStart(1)@javascript:gs.daysAgoEnd(0)&sysparm_fields=sys_id,number,short_description,description,sys_updated_on,assigned_to,cmdb_ci,resolved_at,closed_at,opened_at,company,assignment_group,closed_by,opened_by,resolved_by,priority,escalation,made_sla,sla_due,due_date"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/serviceNOW_prod_REST')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/serviceNow_ast_contract_copy')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "rest query to serviceNow for Task",
-				"linkedServiceName": {
-					"referenceName": "serviceNOW_prod_REST",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": "table/incident_metric"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/serviceNOW_prod_REST')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/seviceNow_TKapp_dataSink')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "rpa_data_blob_store",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "ckm-share"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/rpa_data_blob_store')]"
 			]
 		}
 	]

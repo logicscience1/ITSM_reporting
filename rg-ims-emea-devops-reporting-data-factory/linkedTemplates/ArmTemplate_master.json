@@ -51,6 +51,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'serviceNow_task'"
 		},
+		"servicenow_itsm_files_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'servicenow_itsm_files'"
+		},
+		"ISCMS_IntuneLicences_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'ISCMS_IntuneLicences'"
+		},
 		"ServiceNow_company_properties_typeProperties_endpoint": {
 			"type": "string",
 			"defaultValue": "http://insightemea.service-now.com"
@@ -150,6 +158,12 @@
 					},
 					"serviceNow_task_connectionString": {
 						"value": "[parameters('serviceNow_task_connectionString')]"
+					},
+					"servicenow_itsm_files_connectionString": {
+						"value": "[parameters('servicenow_itsm_files_connectionString')]"
+					},
+					"ISCMS_IntuneLicences_sasUri": {
+						"value": "[parameters('ISCMS_IntuneLicences_sasUri')]"
 					},
 					"ServiceNow_company_properties_typeProperties_endpoint": {
 						"value": "[parameters('ServiceNow_company_properties_typeProperties_endpoint')]"

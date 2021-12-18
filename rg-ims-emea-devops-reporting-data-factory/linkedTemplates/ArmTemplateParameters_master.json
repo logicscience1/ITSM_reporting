@@ -38,6 +38,12 @@
 		"serviceNow_task_connectionString": {
 			"value": ""
 		},
+		"servicenow_itsm_files_connectionString": {
+			"value": ""
+		},
+		"ISCMS_IntuneLicences_sasUri": {
+			"value": ""
+		},
 		"ServiceNow_company_properties_typeProperties_endpoint": {
 			"value": "http://insightemea.service-now.com"
 		},
