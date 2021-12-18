@@ -1,0 +1,68 @@
+{
+	"name": "servicenow_sys_user",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "servicenow_itsm_files",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureFileStorageLocation",
+				"fileName": "servicenow_sys_user.csv",
+				"folderPath": "ServiceNow/serviceNow_database_mirror"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "sys_id",
+				"type": "String"
+			},
+			{
+				"name": "last_login",
+				"type": "String"
+			},
+			{
+				"name": "user_name",
+				"type": "String"
+			},
+			{
+				"name": "locked_out",
+				"type": "String"
+			},
+			{
+				"name": "name",
+				"type": "String"
+			},
+			{
+				"name": "active",
+				"type": "String"
+			},
+			{
+				"name": "company",
+				"type": "String"
+			},
+			{
+				"name": "location",
+				"type": "String"
+			},
+			{
+				"name": "sys_updated_on",
+				"type": "String"
+			},
+			{
+				"name": "email",
+				"type": "String"
+			},
+			{
+				"name": "password_needs_reset",
+				"type": "String"
+			}
+		]
+	}
+}
